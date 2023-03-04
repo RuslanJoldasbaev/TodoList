@@ -2,26 +2,20 @@ package com.example.todolist
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val retrofit = RetrofitHelper.getInstance()
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
+        navController = navHostFragment.findNavController()
 
-        val api = retrofit.create(TodoApi::class.java)
-
-        val token = "34|vBwGHJXqZLYhulkoO4hbBZ7Ak4DOCIMPwctlDa2E"
-        lifecycleScope.launchWhenResumed {
-            val response = api.getAllTasks("Bearer $token")
-            if (response.isSuccessful) {
-                Log.d("TTTT", "${response.body()}")
-            } else {
-                Log.d("TTTT", "Message: ${response.message()}")
-            }
-        }
     }
 }

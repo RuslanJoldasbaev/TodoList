@@ -1,14 +1,8 @@
 package com.example.todolist
 
-import com.example.todolist.data.models.GenericData
-import com.example.todolist.data.models.RegisterRequestBodyData
-import com.example.todolist.data.models.RegisterResponseData
-import com.example.todolist.data.models.TaskData
+import com.example.todolist.data.models.*
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface TodoApi {
 
@@ -17,4 +11,19 @@ interface TodoApi {
 
     @POST("/api/register")
     suspend fun registerUser(@Body body: RegisterRequestBodyData): Response<GenericData<RegisterResponseData>>
+
+    @POST("/api/login")
+    suspend fun loginUser(@Body body: LoginData): Response<GenericData<RegisterResponseData>>
+
+    @PUT("/api/tasks")
+    suspend fun updateTasks(
+        @Header("Authorization") token: String,
+    ): Response<GenericData<List<TaskData>>>
+
+    @DELETE("/api/tasks/{id}")
+    suspend fun deleteTasks(
+        @Header("Authorization") token: String,
+        @Path("id")
+        id: Int
+    ): Response<GenericData<List<TaskData>>>
 }
