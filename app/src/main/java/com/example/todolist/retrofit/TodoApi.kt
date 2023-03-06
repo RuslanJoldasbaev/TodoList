@@ -1,4 +1,4 @@
-package com.example.todolist
+package com.example.todolist.retrofit
 
 import com.example.todolist.data.models.*
 import retrofit2.Response
@@ -15,9 +15,18 @@ interface TodoApi {
     @POST("/api/login")
     suspend fun loginUser(@Body body: LoginData): Response<GenericData<RegisterResponseData>>
 
+    @POST("/api/tasks")
+    suspend fun addTasks(
+        @Body body: CreateTaskBodyData,
+        @Header("Authorization") token: String
+    ): Response<GenericData<List<TaskData>>>
+
     @PUT("/api/tasks")
     suspend fun updateTasks(
         @Header("Authorization") token: String,
+        @Body body: DoneRequestBodyData,
+        @Path("id")
+        id: Int
     ): Response<GenericData<List<TaskData>>>
 
     @DELETE("/api/tasks/{id}")

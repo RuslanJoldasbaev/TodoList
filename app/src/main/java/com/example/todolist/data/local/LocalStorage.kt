@@ -12,10 +12,9 @@ class LocalStorage {
             App.instance.getSharedPreferences("ChatAppSharedPref", Context.MODE_PRIVATE)
     }
 
-    var username by StringPreference(pref, "temp001")
-
-
     var token by StringPreference(pref)
 
     var isRegister by BooleanPreference(pref)
+
+    var isDone by BooleanPreference(pref, false)
 }

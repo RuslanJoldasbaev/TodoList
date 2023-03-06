@@ -1,24 +1,24 @@
 package com.example.todolist.ui.all
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.chatapp.utils.toast
 import com.example.todolist.R
-import com.example.todolist.RetrofitHelper
-import com.example.todolist.TodoApi
+import com.example.todolist.retrofit.RetrofitHelper
+import com.example.todolist.retrofit.TodoApi
 import com.example.todolist.databinding.FragmentMainBinding
 import com.example.todolist.presentation.MainViewModel
-import com.example.todolist.ui.adapters.TasksAdapter
+import com.example.todolist.ui.adapters.TaskAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class MainFragment : Fragment(R.layout.fragment_main) {
     private lateinit var binding: FragmentMainBinding
-    private val adapter = TasksAdapter()
+    private val adapter = TaskAdapter()
     private lateinit var viewModel: MainViewModel
 
 
@@ -34,12 +34,12 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         val retrofit = RetrofitHelper.getInstance()
         val api = retrofit.create(TodoApi::class.java)
 
+        initListeners()
+        initObservers()
+
         lifecycleScope.launchWhenResumed {
             viewModel.getAllTasks()
         }
-
-        initListeners()
-        initObservers()
     }
 
     private fun initListeners() {
@@ -48,29 +48,38 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
             fabAddTask.setOnClickListener {
                 findNavController().navigate(
-                    MainFragmentDirections.actionMainFragmentToAddTaskDialog()
+                    MainFragmentDirections.actionMainFragmentToAddFragment()
                 )
             }
 
-            adapter.setOnDeleteClickListener { taskData, position ->
-                lifecycleScope.launchWhenResumed {
-                    viewModel.delete()
-                }
+            adapter.setOnItemClickListener { id, task, desc ->
+                findNavController().navigate(
+                    MainFragmentDirections.actionMainFragmentToUpdateFragment(id,task,desc)
+                )
             }
+
         }
     }
 
     private fun initObservers() {
         viewModel.getAllTasksFlow.onEach {
-
+            adapter.submitList(it)
         }.launchIn(lifecycleScope)
 
         viewModel.updateTasksFlow.onEach {
 
         }
 
-        viewModel.deleteTasksFlow.onEach {
+        viewModel.messageFlow.onEach {
+            toast("Qa'te islendi")
+        }
+    }
 
+    override fun onStop() {
+        super.onStop()
+
+        lifecycleScope.launchWhenResumed {
+            viewModel.getAllTasks()
         }
     }
 }

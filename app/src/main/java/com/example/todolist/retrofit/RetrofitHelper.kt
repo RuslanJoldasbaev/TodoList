@@ -1,4 +1,4 @@
-package com.example.todolist
+package com.example.todolist.retrofit
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

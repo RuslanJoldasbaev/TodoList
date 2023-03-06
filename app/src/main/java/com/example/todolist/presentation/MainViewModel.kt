@@ -2,17 +2,14 @@ package com.example.todolist.presentation
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.todolist.RetrofitHelper
-import com.example.todolist.TodoApi
+import com.example.todolist.retrofit.RetrofitHelper
+import com.example.todolist.retrofit.TodoApi
 import com.example.todolist.data.models.*
 import com.example.todolist.domian.MainRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -25,6 +22,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val errorFlow = MutableSharedFlow<Throwable>()
     val registerFlow = MutableSharedFlow<RegisterResponseData>()
     val loginFlow = MutableSharedFlow<RegisterResponseData>()
+    val addTasksFlow = MutableSharedFlow<List<TaskData>>()
 
     suspend fun getAllTasks() {
         repo.getAllTasks().onEach {
@@ -42,8 +40,24 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }.launchIn(viewModelScope)
     }
 
-    suspend fun update() {
-        repo.updateTasks().onEach {
+    suspend fun addTasks(name: String,description:String) {
+        repo.addTasks(name,description).onEach {
+            when (it) {
+                is ResultData.Success -> {
+                    addTasksFlow.emit(it.data.payload)
+                }
+                is ResultData.Message -> {
+                    messageFlow.emit(it.message)
+                }
+                is ResultData.Error -> {
+                    errorFlow.emit(it.error)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    suspend fun update(isDone:Boolean,id:Int) {
+        repo.updateTasks(isDone,id).onEach {
             when (it) {
                 is ResultData.Success -> {
                     updateTasksFlow.emit(it.data.payload)
@@ -58,8 +72,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }.launchIn(viewModelScope)
     }
 
-    suspend fun delete() {
-        repo.deleteTasks().onEach {
+    suspend fun delete(id:Int) {
+        repo.deleteTasks(id).onEach {
             when (it) {
                 is ResultData.Success -> {
                     getAllTasksFlow.emit(it.data.payload)

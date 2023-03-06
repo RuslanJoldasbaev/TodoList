@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.todolist.ui.login.LoginFragment"
-        android:label="LoginFragment" >
+        android:label="LoginFragment">
         <action
             android:id="@+id/action_loginFragment_to_registerFragment"
             app:destination="@id/registerFragment" />
@@ -22,26 +22,34 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.todolist.ui.all.MainFragment"
-        android:label="MainFragment" >
+        android:label="MainFragment">
         <action
             android:id="@+id/action_mainFragment_to_updateFragment"
             app:destination="@id/updateFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_addTaskDialog"
-            app:destination="@id/addTaskDialog" />
+            android:id="@+id/action_mainFragment_to_addFragment"
+            app:destination="@id/addFragment" />
     </fragment>
-    <dialog
-        android:id="@+id/addTaskDialog"
-        android:name="com.example.todolist.ui.all.AddFragment"
-        android:label="AddTaskDialog" />
     <fragment
         android:id="@+id/updateFragment"
         android:name="com.example.todolist.ui.all.UpdateFragment"
-        android:label="UpdateFragment" />
+        android:label="UpdateFragment">
+
+        <argument
+            android:name="id"
+            app:argType="integer" />
+        <argument
+            android:name="task"
+            app:argType="string" />
+        <argument
+            android:name="desc"
+            app:argType="string" />
+
+    </fragment>
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.example.todolist.SplashFragment"
-        android:label="SplashFragment" >
+        android:label="SplashFragment">
         <action
             android:id="@+id/action_splashFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
@@ -49,4 +57,8 @@
             android:id="@+id/action_splashFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
     </fragment>
+    <dialog
+        android:id="@+id/addFragment"
+        android:name="com.example.todolist.ui.all.AddFragment"
+        android:label="AddFragment" />
 </navigation>
