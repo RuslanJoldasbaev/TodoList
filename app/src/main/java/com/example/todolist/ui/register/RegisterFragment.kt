@@ -54,6 +54,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             val token = it.token
             LocalStorage().token = token
             LocalStorage().isRegister = true
+            LocalStorage().isDone = false
             findNavController().popBackStack()
         }.launchIn(lifecycleScope)
 

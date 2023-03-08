@@ -16,8 +16,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val repo = MainRepository(RetrofitHelper.getInstance().create(TodoApi::class.java))
 
     val getAllTasksFlow = MutableSharedFlow<List<TaskData>>()
-    val updateTasksFlow = MutableSharedFlow<List<TaskData>>()
-    val deleteTasksFlow = MutableSharedFlow<List<TaskData>>()
     val messageFlow = MutableSharedFlow<String>()
     val errorFlow = MutableSharedFlow<Throwable>()
     val registerFlow = MutableSharedFlow<RegisterResponseData>()
@@ -57,35 +55,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     suspend fun update(isDone:Boolean,id:Int) {
-        repo.updateTasks(isDone,id).onEach {
-            when (it) {
-                is ResultData.Success -> {
-                    updateTasksFlow.emit(it.data.payload)
-                }
-                is ResultData.Message -> {
-                    messageFlow.emit(it.message)
-                }
-                is ResultData.Error -> {
-                    errorFlow.emit(it.error)
-                }
-            }
-        }.launchIn(viewModelScope)
+        repo.updateTasks(isDone,id)
     }
 
     suspend fun delete(id:Int) {
-        repo.deleteTasks(id).onEach {
-            when (it) {
-                is ResultData.Success -> {
-                    getAllTasksFlow.emit(it.data.payload)
-                }
-                is ResultData.Message -> {
-                    messageFlow.emit(it.message)
-                }
-                is ResultData.Error -> {
-                    errorFlow.emit(it.error)
-                }
-            }
-        }.launchIn(viewModelScope)
+        repo.deleteTasks(id)
     }
 
     suspend fun register(name: String, password: String, phone: String) {

@@ -31,27 +31,12 @@ class MainRepository(val api: TodoApi) {
         emit(ResultData.Error(it))
     }
 
-    suspend fun updateTasks(isDone: Boolean, id: Int) = flow {
-        val response =
-            api.updateTasks("Bearer ${LocalStorage().token}", DoneRequestBodyData(isDone), id)
-        if (response.isSuccessful) {
-            emit(ResultData.Success(response.body()!!))
-        } else {
-            emit(ResultData.Message(response.message()))
-        }
-    }.catch {
-        emit(ResultData.Error(it))
+    suspend fun updateTasks(isDone: Boolean, id: Int) {
+        api.updateTasks( "Bearer ${LocalStorage().token}", DoneRequestBodyData(isDone),id)
     }
 
-    suspend fun deleteTasks(id: Int) = flow {
-        val response = api.deleteTasks("Bearer ${LocalStorage().token}", id)
-        if (response.isSuccessful) {
-            emit(ResultData.Success(response.body()!!))
-        } else {
-            emit(ResultData.Message(response.message()))
-        }
-    }.catch {
-        emit(ResultData.Error(it))
+    suspend fun deleteTasks(id: Int) {
+        api.deleteTasks("Bearer ${LocalStorage().token}", id)
     }
 
     suspend fun register(name: String, password: String, phone: String) = flow {

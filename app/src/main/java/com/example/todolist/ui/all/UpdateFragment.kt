@@ -33,50 +33,45 @@ class UpdateFragment : Fragment(R.layout.fragment_update) {
         val id = navArgs.id
         val task = navArgs.task
         val desc = navArgs.desc
+        val bool = navArgs.bool
 
+        Log.d("TTTT", "$bool")
 
+        binding.apply {
+            if (bool) {
+                btnIsDone.text = "done"
+            } else btnIsDone.text = "not done"
 
-        initListeners(id)
-        initObservers()
+            btnIsDone.setOnClickListener {
+                lifecycleScope.launchWhenResumed {
+                    if (bool) {
+                        viewModel.update(false, id)
+                    } else {
+                        viewModel.update(true, id)
+                    }
+                }
+                findNavController().popBackStack()
+            }
+        }
 
+        initListeners(id, task, desc)
     }
 
-    private fun initListeners(id: Int) {
+    private fun initListeners(id: Int, task: String, desc: String) {
         binding.apply {
+            etName.text = task
+            etDescription.text = desc
+
+            buttonBack.setOnClickListener {
+                findNavController().popBackStack()
+            }
+
             btnIsDelete.setOnClickListener {
                 lifecycleScope.launchWhenResumed {
                     viewModel.delete(id)
                     findNavController().popBackStack()
                 }
             }
-
-            btnIsDone.setOnClickListener {
-                if (LocalStorage().isDone) {
-                    btnIsDone.text = "Not Done"
-                    LocalStorage().isDone = false
-                } else {
-                    LocalStorage().isDone = true
-                    btnIsDone.text = "Done"
-                }
-                lifecycleScope.launchWhenResumed {
-                    Log.d("Warrr", "${LocalStorage().isDone}")
-                    viewModel.update(LocalStorage().isDone, id)
-                }
-            }
-        }
-    }
-
-    private fun initObservers() {
-        viewModel.updateTasksFlow.onEach {
-
-        }
-
-        viewModel.deleteTasksFlow.onEach {
-
-        }
-
-        viewModel.messageFlow.onEach {
-            toast("Qa'te islendi")
         }
     }
 

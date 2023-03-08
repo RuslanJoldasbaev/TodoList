@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.chatapp.utils.toast
 import com.example.todolist.R
 import com.example.todolist.retrofit.RetrofitHelper
@@ -26,25 +27,24 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMainBinding.bind(view)
 
+        binding.recyclerView.adapter = adapter
+
         viewModel = ViewModelProvider(
             requireActivity(),
             ViewModelProvider.AndroidViewModelFactory(requireActivity().application)
         )[MainViewModel::class.java]
 
-        val retrofit = RetrofitHelper.getInstance()
-        val api = retrofit.create(TodoApi::class.java)
+        lifecycleScope.launchWhenResumed {
+            viewModel.getAllTasks()
+        }
 
         initListeners()
         initObservers()
 
-        lifecycleScope.launchWhenResumed {
-            viewModel.getAllTasks()
-        }
     }
 
     private fun initListeners() {
         binding.apply {
-            recyclerView.adapter = adapter
 
             fabAddTask.setOnClickListener {
                 findNavController().navigate(
@@ -52,9 +52,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 )
             }
 
-            adapter.setOnItemClickListener { id, task, desc ->
+            adapter.setOnItemClickListener {
                 findNavController().navigate(
-                    MainFragmentDirections.actionMainFragmentToUpdateFragment(id,task,desc)
+                    MainFragmentDirections.actionMainFragmentToUpdateFragment(it.id,it.task,it.description,it.is_done)
                 )
             }
 
@@ -66,20 +66,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             adapter.submitList(it)
         }.launchIn(lifecycleScope)
 
-        viewModel.updateTasksFlow.onEach {
-
-        }
-
         viewModel.messageFlow.onEach {
             toast("Qa'te islendi")
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-        lifecycleScope.launchWhenResumed {
-            viewModel.getAllTasks()
         }
     }
 }

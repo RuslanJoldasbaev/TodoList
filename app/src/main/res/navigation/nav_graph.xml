@@ -45,6 +45,10 @@
             android:name="desc"
             app:argType="string" />
 
+        <argument
+            android:name="bool"
+            app:argType="boolean" />
+
     </fragment>
     <fragment
         android:id="@+id/splashFragment"
@@ -60,5 +64,9 @@
     <dialog
         android:id="@+id/addFragment"
         android:name="com.example.todolist.ui.all.AddFragment"
-        android:label="AddFragment" />
+        android:label="AddFragment" >
+        <action
+            android:id="@+id/action_addFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </dialog>
 </navigation>

@@ -2,6 +2,7 @@ package com.example.todolist.ui.all
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +17,6 @@ import kotlinx.coroutines.flow.onEach
 class AddFragment : DialogFragment(R.layout.fragment_add) {
     private lateinit var binding: FragmentAddBinding
     private lateinit var viewModel: MainViewModel
-
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -41,21 +41,22 @@ class AddFragment : DialogFragment(R.layout.fragment_add) {
 
                 if (name.isNotEmpty() && description.isNotEmpty()) {
                     lifecycleScope.launchWhenResumed {
-                        viewModel.addTasks(name,description)
-                        findNavController().popBackStack()
-                        val intent = requireActivity().intent
-                        requireActivity().finish()
-                        startActivity(intent)
+                        viewModel.addTasks(name, description)
+                        viewModel.getAllTasks()
+                        findNavController().navigate(
+                            AddFragmentDirections.actionAddFragmentToMainFragment()
+                        )
                     }
+                } else {
+                    Toast.makeText(requireContext(), "Kesteni toltir", Toast.LENGTH_SHORT).show()
                 }
             }
-
         }
     }
 
     private fun initObservers() {
         viewModel.addTasksFlow.onEach {
-            findNavController().popBackStack()
+
         }.launchIn(lifecycleScope)
 
         viewModel.messageFlow.onEach {

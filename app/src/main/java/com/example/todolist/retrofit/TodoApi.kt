@@ -21,7 +21,7 @@ interface TodoApi {
         @Header("Authorization") token: String
     ): Response<GenericData<List<TaskData>>>
 
-    @PUT("/api/tasks")
+    @PUT("/api/tasks/{id}")
     suspend fun updateTasks(
         @Header("Authorization") token: String,
         @Body body: DoneRequestBodyData,
@@ -34,5 +34,5 @@ interface TodoApi {
         @Header("Authorization") token: String,
         @Path("id")
         id: Int
-    ): Response<GenericData<List<TaskData>>>
+    )
 }
