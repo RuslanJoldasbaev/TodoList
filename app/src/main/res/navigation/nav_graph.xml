@@ -61,12 +61,8 @@
             android:id="@+id/action_splashFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
     </fragment>
-    <dialog
+    <fragment
         android:id="@+id/addFragment"
         android:name="com.example.todolist.ui.all.AddFragment"
-        android:label="AddFragment" >
-        <action
-            android:id="@+id/action_addFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
-    </dialog>
+        android:label="AddFragment" />
 </navigation>
